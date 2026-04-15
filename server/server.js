@@ -11,11 +11,19 @@ app.use(bodyParser.json());
 // Serve static content in directory 'files'
 app.use(express.static(path.join(__dirname, 'files')));
 
-// Configure a 'get' endpoint for all movies..
+//HTTP/GET
 app.get('/movies', function (req, res) {
-  /* Task 1.2. Remove the line below and eturn the movies from 
-     the model as an array */
-  res.sendStatus(404)
+
+  /* Task 1.2. */
+  try{
+    const movies = require("./movie-model.js");
+    res.json(movies);
+  }catch(e){
+    res.sendStatus(500)
+  }
+
+
+
 })
 
 // Configure a 'get' endpoint for a specific movie

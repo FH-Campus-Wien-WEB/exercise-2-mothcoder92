@@ -8,6 +8,7 @@ window.onload = function () {
         /* Task 1.3. Add your code from exercise 1 here 
            and include a non-functional 'Edit' button
            to pass this test */
+        bodyElement.innerHTML = xhr.responseText;
       }
 
     } else {
