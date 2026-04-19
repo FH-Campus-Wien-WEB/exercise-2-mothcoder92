@@ -1,99 +1,184 @@
 function setMovie(movie) {
-  for (const element of document.forms[0].elements) {
-    const name = element.id;
-    const value = movie[name];
 
-    if (name === "Genres") {
-      const options = element.options;
-      for (let index = 0; index < options.length; index++) {
-        const option = options[index];
-        option.selected = value.indexOf(option.value) >= 0;
-      }
-    } else {
-      element.value = value;
+  //console.log(movie)
+  document.getElementById("movieTitle").value = movie.Title;
+  document.getElementById("movieReleaseYear").value = movie.Year;
+  document.getElementById("movieRating").value = movie.Rated;
+
+  //ISO formatting
+  const parsedDate = new Date(movie.Released);
+  const formattedDate = parsedDate.toISOString().split("T")[0];
+  //console.log(formattedDate);
+  document.getElementById("movieReleaseDate").value = formattedDate;
+  document.getElementById("movieRuntime").value = movie.Runtime.split(" ")[0];
+
+  //Genres
+  const genres = movie.Genre.split(",").map(g => g.trim());
+  document.querySelectorAll('#movieGenre input[type="checkbox"]').forEach(cb => {
+    if (genres.includes(cb.value)) {
+      cb.checked = true;
     }
-  }
+  });
+
+  //Actors and Directors
+  movie.Actors.forEach(actor => addActor(actor));
+  movie.Directors.forEach(director => addDirector(director));
+  movie.Writers.forEach(writer => addWriter(writer));
+
+  document.getElementById("moviePlot").value = movie.Plot;
+  document.getElementById("moviePoster").value = movie.Poster;
+  document.getElementById("movieMetascore").value = movie.Metascore;
+  document.getElementById("movieImdbRating").value = movie.imdbRating;
+  document.getElementById("movieimdbID").value = movie.imdbID;
 }
 
+function createInput(containerId, value = "") {
+  const div = document.createElement("div");
+  div.classList.add("dynamic-input");
+
+  div.innerHTML = `
+    <input type="text" value="${value}">
+    <button type="button" class="remove-btn">✕</button>
+  `;
+
+  div.querySelector("button").addEventListener("click", () => {
+    div.remove();
+  });
+
+  document.getElementById(containerId).appendChild(div);
+}
+
+function addActor(value = "") {
+  createInput("actorsContainer", value);
+}
+
+function addDirector(value = "") {
+  createInput("directorsContainer", value);
+}
+
+function addWriter(value = "") {
+  createInput("writersContainer", value);
+}
+
+// Retrieve Data from form
 function getMovie() {
   const movie = {};
 
-  const elements = Array.from(document.forms[0].elements).filter(
-    (element) => element.id,
-  );
+  //Basic fields
+  movie.Title = document.getElementById("movieTitle").value;
+  movie.Year = document.getElementById("movieReleaseYear").value;
+  movie.Rated = document.getElementById("movieRating").value;
+  movie.Released = document.getElementById("movieReleaseDate").value;
+  movie.Runtime = document.getElementById("movieRuntime").value + " min";
+  movie.Plot = document.getElementById("moviePlot").value;
+  movie.Poster = document.getElementById("moviePoster").value;
+  movie.Metascore = Number(document.getElementById("movieMetascore").value);
+  movie.imdbRating = Number(document.getElementById("movieImdbRating").value);
+  movie.imdbID = document.getElementById("movieimdbID").value;
+  console.log(movie.imdbID);
 
-  for (const element of elements) {
-    const name = element.id;
+  // Genres (checkboxes)
+  movie.Genre = [...document.querySelectorAll('#movieGenre input:checked')]
+      .map(cb => cb.value);
 
-    let value;
-
-    if (name === "Genres") {
-      value = [];
-      const options = element.options;
-      for (let index = 0; index < options.length; index++) {
-        const option = options[index];
-        if (option.selected) {
-          value.push(option.value);
-        }
-      }
-    } else if (
-      name === "Metascore" ||
-      name === "Runtime" ||
-      name === "imdbRating"
-    ) {
-      value = Number(element.value);
-    } else if (
-      name === "Actors" ||
-      name === "Directors" ||
-      name === "Writers"
-    ) {
-      value = element.value.split(",").map((item) => item.trim());
-    } else {
-      value = element.value;
-    }
-
-    movie[name] = value;
-  }
+  // Actors / Directors / Writers (dynamic inputs)
+  movie.Actors = getValues("actorsContainer");
+  movie.Directors = getValues("directorsContainer");
+  movie.Writers = getValues("writersContainer");
 
   return movie;
 }
 
-function putMovie() {
-  /* Task 3.3. 
-    - Get the movie data using getMovie()
-    - Configure the XMLHttpRequest to make a PUT to /movies/:imdbID
-    - Set the 'Content-Type' appropriately for JSON data
-    - Configure the function below as the onload event handler
-    - Send the movie data as JSON
-  */
+function getValues(containerId) {
+  return [...document.querySelectorAll(`#${containerId} input`)]
+      .map(input => input.value.trim())
+      .filter(v => v);
+}
 
+function putMovie() {
+  /* Task 3.3.  */
   const xhr = new XMLHttpRequest();
+
+  //data
+  const movie = getMovie();
+
   xhr.onload = function () {
-    if (xhr.status == 200 || xhr.status === 204) {
-      location.href = "index.html";
+    if (xhr.status === 200 || xhr.status === 201 || xhr.status === 204) {
+      window.redirectAfterModal = true;
+      showModal(
+          "Success",
+          movie.imdbID ? "Movie updated successfully." : "Movie created successfully."
+      );
     } else {
-      alert("Saving of movie data failed. Status code was " + xhr.status);
+      showModal(
+          "Error",
+          "Saving failed. Status code: " + xhr.status
+      );
     }
   };
+
+  // ID exists-> put, otherwise post
+  if(movie.imdbID.trim() !== ""){
+    console.log("PUT URL:", "/movies/" + movie.imdbID);
+    xhr.open("PUT", "/movies/"+ movie.imdbID, true);
+  } else {
+    xhr.open("POST", "/movies", true);
+  }
+
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.send(JSON.stringify(movie));
+}
+
+//Modal helpers
+function showModal(title, message) {
+  document.getElementById("modalTitle").innerText = title;
+  document.getElementById("modalMessage").innerText = message;
+  document.getElementById("modalOverlay").classList.remove("hidden");
+}
+
+function closeModal() {
+  document.getElementById("modalOverlay").classList.add("hidden");
+
+  // optional: redirect after success
+  if (window.redirectAfterModal) {
+    window.location.href = "index.html";
+  }
 }
 
 /** Loading and setting the movie data for the movie with the passed imdbID */
-const imdbID = new URLSearchParams(window.location.search).get("imdbID");
+const imdbID = new URLSearchParams(window.location.search).get("imdbID"); //read out id
+//console.log(imdbID);
 
-const xhr = new XMLHttpRequest();
-xhr.open("GET", "/movies/" + imdbID);
-xhr.onload = function () {
-  if (xhr.status === 200) {
-    setMovie(JSON.parse(xhr.responseText));
-  } else {
-    alert(
-      "Loading of movie data failed. Status was " +
-        xhr.status +
-        " - " +
-        xhr.statusText,
-    );
-  }
-};
+//check if I set data
+if(imdbID){
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", "/movies/" + imdbID);
+  xhr.onload = function () {
+    if (xhr.status === 200 && xhr.responseText) {
+      try {
+        const data = JSON.parse(xhr.responseText);
+        setMovie(data);
+      } catch (e) {
+        console.error("Invalid JSON:", xhr.responseText);
+        showModal("Error", "Invalid movie data received.");
+      }
+    } else if (xhr.status === 404) {
+      // THIS is important for your "new movie" case
+      console.log("Movie not found → creating new");
+    } else {
+      showModal(
+          "Error",
+          "Loading failed: " + xhr.status + " - " + xhr.statusText
+      );
+    }
+  };
 
-xhr.send();
+  xhr.send();
+} else {
+  //console.log("No ID, new movie");
+}
+
+
+
+
 

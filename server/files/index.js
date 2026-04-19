@@ -62,6 +62,10 @@ window.onload = function () {
         const imdbLink = footer.querySelector("a");
         imdbLink.setAttribute("href", "https://www.imdb.com/de/title/"+movie["imdbID"]);
 
+        //set button link
+        const editButton = document.getElementById("button-"+movieCounter);
+        editButton.setAttribute("href", "edit.html?imdbID="+movie["imdbID"]);
+
         //console.log(movie)
         movieCounter +=1;
 

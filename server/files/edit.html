@@ -4,8 +4,8 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Edit</title>
-    <link rel="stylesheet" href="index.css"/>
-    <script src="index.js"></script>
+    <link rel="stylesheet" href="edit.css"/>
+
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
@@ -34,46 +34,74 @@
             <input type="text" id="movieTitle" placeholder="e.g. Inception" required>
         </div>
 
-        <div class="form-row">
-            <div class="form-group">
+        <div class="form-row compact-row">
+            <div class="form-group small">
                 <label for="movieReleaseYear">Year</label>
-                <input type="number" id="movieReleaseYear" min="1888" max="2100">
+                <input type="number" id="movieReleaseYear">
             </div>
 
-            <div class="form-group">
-                <label for="movieRating">Rating (0–10)</label>
-                <input type="number" id="movieRating" min="0" max="10" step="0.1">
+            <div class="form-group small">
+                <label for="movieRating">Rating</label>
+                <select id="movieRating"></select>
+            </div>
+
+            <div class="form-group small">
+                <label for="movieReleaseDate">Date</label>
+                <input type="date" id="movieReleaseDate">
+            </div>
+
+            <div class="form-group small">
+                <label for="movieRuntime">Min</label>
+                <input type="number" id="movieRuntime">
             </div>
         </div>
 
         <div class="form-group">
-            <label for="movieReleaseDate">Release Date</label>
-            <input type="date" id="movieReleaseDate">
+            <label>Genres</label>
+            <div id="movieGenre" class="checkbox-grid">
+                <label><input type="checkbox" value="Action"> Action</label>
+                <label><input type="checkbox" value="Adventure"> Adventure</label>
+                <label><input type="checkbox" value="Animation"> Animation</label>
+                <label><input type="checkbox" value="Biography"> Biography</label>
+                <label><input type="checkbox" value="Comedy"> Comedy</label>
+                <label><input type="checkbox" value="Crime"> Crime</label>
+                <label><input type="checkbox" value="Documentary"> Documentary</label>
+                <label><input type="checkbox" value="Drama"> Drama</label>
+                <label><input type="checkbox" value="Family"> Family</label>
+                <label><input type="checkbox" value="Fantasy"> Fantasy</label>
+                <label><input type="checkbox" value="Film Noir"> Film Noir</label>
+                <label><input type="checkbox" value="History"> History</label>
+                <label><input type="checkbox" value="Horror"> Horror</label>
+                <label><input type="checkbox" value="Music"> Music</label>
+                <label><input type="checkbox" value="Musical"> Musical</label>
+                <label><input type="checkbox" value="Mystery"> Mystery</label>
+                <label><input type="checkbox" value="Romance"> Romance</label>
+                <label><input type="checkbox" value="Sci-Fi"> Sci-Fi</label>
+                <label><input type="checkbox" value="Short Film"> Short Film</label>
+                <label><input type="checkbox" value="Sport"> Sport</label>
+                <label><input type="checkbox" value="Superhero"> Superhero</label>
+                <label><input type="checkbox" value="Thriller"> Thriller</label>
+                <label><input type="checkbox" value="War"> War</label>
+                <label><input type="checkbox" value="Western"> Western</label>
+            </div>
         </div>
 
         <div class="form-group">
-            <label for="movieRuntime">Runtime (minutes)</label>
-            <input type="number" id="movieRuntime" min="1">
+            <label>Directors</label>
+            <div id="directorsContainer"></div>
+            <button type="button" class="add-btn" onclick="addDirector()">+ Add Director</button>
         </div>
 
         <div class="form-group">
-            <label for="movieGenre">Genres</label>
-            <input type="text" id="movieGenre" placeholder="e.g. Action, Sci-Fi">
+            <label>Actors</label>
+            <div id="actorsContainer"></div>
+            <button type="button" class="add-btn" onclick="addActor()">+ Add Actor</button>
         </div>
 
         <div class="form-group">
-            <label for="movieDirectors">Directors</label>
-            <input type="text" id="movieDirectors">
-        </div>
-
-        <div class="form-group">
-            <label for="movieActors">Actors</label>
-            <input type="text" id="movieActors">
-        </div>
-
-        <div class="form-group">
-            <label for="movieWriters">Writers</label>
-            <input type="text" id="movieWriters">
+            <label>Writers</label>
+            <div id="writersContainer"></div>
+            <button type="button" class="add-btn" onclick="addWriter()">+ Add Writer</button>
         </div>
 
         <div class="form-group">
@@ -89,22 +117,36 @@
         <div class="form-row">
             <div class="form-group">
                 <label for="movieMetascore">Metascore</label>
-                <input type="number" id="movieMetascore" min="0" max="100">
+                <input type="number" id="movieMetascore" min="1" max="100">
             </div>
 
             <div class="form-group">
                 <label for="movieImdbRating">IMDb Rating</label>
-                <input type="number" id="movieImdbRating" min="0" max="10" step="0.1">
+                <input type="number" id="movieImdbRating" min="1" max="10" step="0.1">
             </div>
         </div>
 
-        <div class="form-group">
-            <label for="movieImdbId">IMDb ID</label>
-            <input type="text" id="movieImdbId" placeholder="tt1234567">
+        <div class="form-group" style="display: none">
+            <label for="movieimdbID">IMDb ID</label>
+            <input type="text" id="movieimdbID">
         </div>
 
-        <button type="submit" class="submit-btn">Save Movie</button>
+        <div class="form-actions">
+            <button type="button" class="btn-main" onclick="putMovie()">Save</button>
+            <a href="index.html" class="btn-secondary">Cancel</a>
+        </div>
     </form>
 </div>
+
+<div id="modalOverlay" class="modal-overlay hidden">
+    <div class="modal-box">
+        <h3 id="modalTitle"></h3>
+        <p id="modalMessage"></p>
+        <button class="btn-main" onclick="closeModal()">OK</button>
+    </div>
+</div>
+
+<script src="edit.js"></script>
+
 </body>
 </html>

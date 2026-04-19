@@ -2,11 +2,7 @@
 
 h1 {
   font-size: 200%;
-  margin: 8px 0px;
-}
-
-img {
-  border-radius: 12px;
+  margin: 8px 0;
 }
 
 article {
@@ -38,4 +34,116 @@ select {
 
 textarea {
   width: 100%;
+}
+
+/* Cards */
+.card {
+  border: none;
+  border-radius: 14px;
+  overflow: hidden;
+  margin: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: #fff;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.15);
+}
+.card-body {
+  padding: 12px 14px;
+}
+.card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+small {
+  font-size: 0.8rem;
+  color: #666;
+}
+.card-body p {
+  font-size: 0.85rem;
+  color: #444;
+  margin-top: 8px;
+  line-height: 1.4;
+}
+.card-header {
+  background: transparent;
+  border: none;
+  padding: 6px 0;
+}
+.card-header a {
+  font-size: 0.85rem;
+  text-decoration: none;
+  color: #333;
+}
+.card-header a:hover {
+  color: #4a90e2;
+}
+.movie-card {
+  max-width: 320px;
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.card {
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: transparent;
+  border-top: 1px solid #eee;
+  padding: 8px 12px;
+}
+
+/* Grid */
+.row {
+  padding: 20px;
+}
+
+/* Poster */
+.card-img-top {
+  height: 320px;
+  width: 100%;
+  object-fit: cover;
+}
+img {
+  border-radius: 12px;
+}
+
+/* Badges */
+.badge {
+  margin-right: 4px;
+  margin-bottom: 4px;
+  font-size: 0.7rem;
+  padding: 5px 8px;
+  border-radius: 999px;
+}
+.badge-info {
+  background-color: #4a90e2;
+}
+
+/* Button */
+.btn-edit {
+  background: transparent;
+  border: 1px solid #4a90e2;
+  color: #4a90e2;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  padding: 5px 10px;
+  transition: all 0.2s ease;
+}
+.btn-edit:hover {
+  background: #4a90e2;
+  color: white;
 }

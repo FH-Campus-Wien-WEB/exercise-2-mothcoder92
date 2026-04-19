@@ -22,30 +22,60 @@ app.get('/movies', function (req, res) {
   }catch(e){
     res.sendStatus(500)
   }
-
-
-
 })
 
 //HTTP/GET?=imdb_id
 app.get('/movies/:imdbID', function (req, res) {
-  /* Task 2.1. */
-  console.log(req.params.imdbID.substring(1));
-  try{
-    const movies = require("./movie-model.js");
-    res.json(movies.find(movie => movie.imdbID === req.params.imdbID.substring(1)));
-  }catch(e){
-    res.sendStatus(500)
+  try {
+    const imdbID = req.params.imdbID;
+
+    const movie = movies.find(m => m.imdbID === imdbID);
+
+    if (!movie) {
+      return res.sendStatus(404);
+    }
+    return res.json(movie);
+
+  } catch (e) {
+    return res.sendStatus(500);
   }
+});
+
+/* Task 3.1 and 3.2. */
+
+app.put('/movies/:imdbID', function (req, res) {
+
+  console.log("PUT PARAM:", req.params.imdbID);
+  console.log("BODY:", req.body);
+  //Read movie from req
+  const imdbID = req.params.imdbID;
+  const movieData = req.body;
+  //Check if exists
+  const exists = movies.find(movie => movie.imdbID === imdbID);
+  //save update whatnot
+  if (!exists) {
+    res.sendStatus(404);
+  }
+
+  //array fix
+  if (Array.isArray(movieData.Genre)) {
+    movieData.Genre = movieData.Genre.join(", ");
+  }
+
+  Object.assign(exists, movieData);
+
+  res.send(200);
 })
 
-/* Task 3.1 and 3.2.
-   - Add a new PUT endpoint
-   - Check whether the movie sent by the client already exists 
-     and continue as described in the assignment */
-
-app.post('/movies/:imdbID', function (req, res) {})
-
+app.post('/movies', function (req, res) {
+  //Create a new movie
+  console.log(req.body);
+  const movieData = req.body;
+  movieData.imdbID = "tt"+Date.now();
+  movies.push(movieData);
+  console.log(movies);
+  return res.status(201);
+})
 
 app.listen(3000)
 
