@@ -43,6 +43,7 @@ app.get('/movies/:imdbID', function (req, res) {
 
 /* Task 3.1 and 3.2. */
 
+// HTTP/PUT
 app.put('/movies/:imdbID', function (req, res) {
 
   console.log("PUT PARAM:", req.params.imdbID);
@@ -67,6 +68,7 @@ app.put('/movies/:imdbID', function (req, res) {
   res.send(200);
 })
 
+// HTTP POST
 app.post('/movies', function (req, res) {
   //Create a new movie
   console.log(req.body);
